@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
-public class Mandelblot extends Fractal{
-    public Mandelblot() {
+public class Mandelbrot extends Fractal{
+    public Mandelbrot() {
     }
 
     public Complex1 step(Complex1 z, Complex1 c) {

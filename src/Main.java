@@ -1,7 +1,5 @@
 import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -17,14 +15,15 @@ public class Main extends JPanel{
 
     private static BufferedImage canvas;
 
-    private static final Mandelblot Mandelblot = new Mandelblot();
+    private static final Mandelbrot Mandelbrot = new Mandelbrot();
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         /*
         BigDecimal num = new BigDecimal(1d/3d);
         num = num.setScale(10,1);
         System.out.println(1);
         */
+
 
         int width = widthOfField * SIZE;
         int height = heightOfField * SIZE;
@@ -39,11 +38,13 @@ public class Main extends JPanel{
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        baseField = Mandelblot.setup(baseField);
+        baseField = Mandelbrot.setup(baseField);
 
-        process(50);
-        panel.paintField(baseField, SIZE, Mandelblot);
+        process(30);
+        panel.paintField(baseField, SIZE, Mandelbrot);
         //TimeUnit.MILLISECONDS.sleep(1);
+
+
     }
 
     private static void process(int iterations) {
@@ -78,7 +79,6 @@ public class Main extends JPanel{
                         break;
                 }
             }
-
         }
     }
 }
