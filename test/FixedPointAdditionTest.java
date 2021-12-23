@@ -114,4 +114,20 @@ public class FixedPointAdditionTest {
         num1.add(num2);
         Assertions.assertEquals(-3.455, num1.getProperNumber());
     }
+
+    @Test
+    public void additionTestScale1() {
+        FixedPoint num1 = new FixedPoint("-0.00030004");
+        FixedPoint num2 = new FixedPoint("-1.111");
+        num1.add(num2);
+        Assertions.assertEquals(-1.11130004, num1.getProperNumber());
+    }
+
+    @Test
+    public void additionTestScale2() {
+        FixedPoint num1 = new FixedPoint("-2.345");
+        FixedPoint num2 = new FixedPoint("-1.11");
+        num1.add(num2);
+        Assertions.assertEquals(-3.455, num1.getProperNumber());
+    }
 }

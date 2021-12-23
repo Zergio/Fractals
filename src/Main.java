@@ -1,5 +1,4 @@
 import java.awt.image.BufferedImage;
-import java.math.BigDecimal;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -19,7 +18,7 @@ public class Main extends JPanel{
 
     public static void main(String[] args) {
         /*
-        BigDecimal num = new BigDecimal(1d/3d);
+        FixedPoint num = new FixedPoint(1d/3d);
         num = num.setScale(10,1);
         System.out.println(1);
         */
@@ -40,43 +39,49 @@ public class Main extends JPanel{
 
         baseField = Mandelbrot.setup(baseField);
 
-        process(30);
+        process(2);
         panel.paintField(baseField, SIZE, Mandelbrot);
         //TimeUnit.MILLISECONDS.sleep(1);
-
-
     }
 
     private static void process(int iterations) {
-        BigDecimal decHeight = new BigDecimal(heightOfField, Utils.CONTEXT);
-        BigDecimal decWidth = new BigDecimal(widthOfField, Utils.CONTEXT);
-        BigDecimal zoomX = new BigDecimal("30", Utils.CONTEXT);//0.5
-        BigDecimal offsetX = new BigDecimal("0.7", Utils.CONTEXT);//0.5
-        BigDecimal zoomY = new BigDecimal("30", Utils.CONTEXT);//0.5
-        BigDecimal offsetY = new BigDecimal("0.3", Utils.CONTEXT);//0.0
-        BigDecimal zoomXByWidth = Utils.TWO.divide(decWidth.multiply(zoomX, Utils.CONTEXT), Utils.CONTEXT);
-        BigDecimal zoomYByHeight = Utils.TWO.divide(decHeight.multiply(zoomY, Utils.CONTEXT), Utils.CONTEXT);
+        FixedPoint decHeight = new FixedPoint(heightOfField);
+        FixedPoint decWidth = new FixedPoint(widthOfField);
+        FixedPoint zoomX = new FixedPoint("0.5");//0.5    //30
+        FixedPoint offsetX = new FixedPoint("0.5");//0.5  //0.7
+        FixedPoint zoomY = new FixedPoint("0.5");//0.5    //30
+        FixedPoint offsetY = new FixedPoint("0.0");//0.0  //0.3
+//        FixedPoint two = new FixedPoint("2.0");
+//        decWidth.multiply(zoomX);
+//        two.divide(decWidth);
+        FixedPoint zoomXByWidth = new FixedPoint("0.00075");
+//        two = new FixedPoint("2.0");
+//        decHeight.multiply(zoomY);
+//        two.divide(decHeight);
+        FixedPoint zoomYByHeight = new FixedPoint("0.001");
         int startI = -widthOfField / 2;
         int startJ = -heightOfField / 2;
         for (int i = startI; i < startI + widthOfField; i++) {
-            BigDecimal x = new BigDecimal(i, Utils.CONTEXT)
-                    .multiply(zoomXByWidth, Utils.CONTEXT)
-                    .subtract(offsetX, Utils.CONTEXT);
+            FixedPoint x = new FixedPoint(i);
+            x.multiply(zoomXByWidth);
+            x.subtract(offsetX);
             for (int j = startJ; j < startJ + heightOfField; j++) {
-                BigDecimal y = new BigDecimal(j, Utils.CONTEXT)
-                        .multiply(zoomYByHeight, Utils.CONTEXT)
-                        .subtract(offsetY, Utils.CONTEXT);
+                FixedPoint y = new FixedPoint(j);
+                y.multiply(zoomYByHeight);
+                y.subtract(offsetY);
                 Complex1 xy = new Complex1(x, y);
                 for (int num = 0; num < iterations; num++) {
                     Complex1 current = baseField[j - startJ][i - startI];
                     current.square();
                     current.plus(xy);
-                    if (Math.abs(current.real()
-                            .pow(2, Utils.CONTEXT)
-                            .add(current.imag()
-                                    .pow(2, Utils.CONTEXT),
-                                    Utils.CONTEXT).intValue()) > 4)
+                    FixedPoint r = new FixedPoint(current.real().getNumber(), current.real().getScale());
+                    FixedPoint im = new FixedPoint(current.imag().getNumber(), current.imag().getScale());;
+                    im.square();
+                    r.square();
+                    r.add(im);
+                    if (Math.abs(r.getProperNumber()) > 4) {
                         break;
+                    }
                 }
             }
         }

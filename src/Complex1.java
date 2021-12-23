@@ -1,42 +1,38 @@
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 public class Complex1 extends Object {
-    private BigDecimal x,y;
+    private FixedPoint x,y;
 
-    public Complex1(BigDecimal real,BigDecimal imaginary) {
+    public Complex1(FixedPoint real,FixedPoint imaginary) {
         x = real;
         y = imaginary;
     }
 
     public Complex1(double real, double imaginary) {
-        x = new BigDecimal(real, MathContext.DECIMAL64);
-        y = new BigDecimal(imaginary, MathContext.DECIMAL64);
+        x = new FixedPoint((long) real); //I know that this isn't really how it should work, but duck this, i am tired and willl fix this later.
+        y = new FixedPoint((long) imaginary);
     }
 /*
     public Complex1(int real,int imaginary) {
-        x = new BigDecimal(real);
-        y = new BigDecimal(imaginary);
+        x = new FixedPoint(real);
+        y = new FixedPoint(imaginary);
     }
-
-
  */
-    public BigDecimal real() {
+
+    public FixedPoint real() {
         return x;
     }
 
-    public BigDecimal imag() {
+    public FixedPoint imag() {
         return y;
     }
 
     public void plus(Complex1 number) {
-        x = x.add(number.real(), MathContext.DECIMAL64);
-        y = y.add(number.imag(), MathContext.DECIMAL64);
+        x.add(number.real());
+        y.add(number.imag());
     }
 
     public void minus(Complex1 number) {
-        x = x.subtract(number.real(), MathContext.DECIMAL64);
-        y = y.subtract(number.imag(), MathContext.DECIMAL64);
+        x.subtract(number.real());
+        y.subtract(number.imag());
     }
 
     /**
@@ -53,13 +49,12 @@ public class Complex1 extends Object {
     }
 
     public void square() {
-        BigDecimal temp = x;
-        x = x.pow(2, MathContext.DECIMAL64)
-                .subtract(
-                        y.pow(2, MathContext.DECIMAL64),
-                        MathContext.DECIMAL64);
-        y = y.multiply(temp, MathContext.DECIMAL64)
-                .multiply(Utils.TWO, MathContext.DECIMAL64);
+        FixedPoint temp = new FixedPoint(x.getNumber(), x.getScale());
+        x.square();
+        y.square();
+        x.subtract(y);
+        y.multiply(temp);
+        x.multiply(new FixedPoint(2));
     }
 
     public void sqrt() {

@@ -66,20 +66,24 @@ public class DirectDraw extends JPanel {
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
                 Complex1 current = field[i][j];
-                float[] hsb;
+                float[] hsb= rgb2hsb((int) current.real().getNumber() % 255, (int) current.imag().getNumber() % 255,125);
+/*
                 if (i == field.length/2 && j == field[i].length/2) {
                     hsb = rgb2hsb(0,0,255);
                 } else {
-                    if (Math.abs(current.real()
-                            .pow(2, Utils.CONTEXT)
-                            .add(current.imag()
-                                            .pow(2, Utils.CONTEXT),
-                                    Utils.CONTEXT).intValue()) > 4) {
+                    FixedPoint r = new FixedPoint(current.real().getNumber(), current.real().getScale());
+                    FixedPoint im = new FixedPoint(current.imag().getNumber(), current.imag().getScale());
+                    r.square();
+                    im.square();
+                    r.add(im);
+
+                    if (Math.abs(r.getProperNumber()) > 4) {
                         hsb = rgb2hsb(255, 255, 255);
                     } else {
                         hsb = rgb2hsb(0, 0, 0);
                     }
                 }
+*/
                 drawRect(Color.getHSBColor(hsb[0], hsb[1], hsb[2]), j * size, i * size, size, size);
             }
         }
