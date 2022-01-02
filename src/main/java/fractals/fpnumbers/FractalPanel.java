@@ -1,18 +1,21 @@
+package fractals.fpnumbers;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.math.MathContext;
 import java.util.Arrays;
 import javax.swing.JPanel;
 
-public class DirectDraw extends JPanel {
+public class FractalPanel<T extends FPNumber<T>> extends JPanel {
 
-    private BufferedImage canvas;
+    private final BufferedImage canvas;
+    private final Fractal<T> fractal;
 
-    public DirectDraw(int width, int height) {
-        canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    public FractalPanel(Fractal<T> fractal, int width, int height) {
+        this.fractal = fractal;
+        this.canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         fillCanvas(Color.WHITE);
     }
 
@@ -62,29 +65,56 @@ public class DirectDraw extends JPanel {
         return new float[] { hsbH, hsbS, hsbB };
     }
 
-    public void paintField(Complex1[][] field, int size, Fractal fractalType) {
+    public static float[] RGBtoHSV(int r, int g, int b){
+
+        float h, s, v;
+
+        int min, max, delta;
+
+        min = Math.min(Math.min(r, g), b);
+        max = Math.max(Math.max(r, g), b);
+
+        // V
+        v = max;
+
+        delta = max - min;
+
+        // S
+        if( max != 0 )
+            s = delta / max;
+        else {
+            s = 0;
+            h = -1;
+            return new float[]{h,s,v};
+        }
+
+        // H
+        if( r == max )
+            h = ( g - b ) / delta; // between yellow & magenta
+        else if( g == max )
+            h = 2 + ( b - r ) / delta; // between cyan & yellow
+        else
+            h = 4 + ( r - g ) / delta; // between magenta & cyan
+
+        h *= 60;    // degrees
+
+        if( h < 0 )
+            h += 360;
+
+        return new float[]{h,s,v};
+    }
+
+    public void paintField(int size) {
+        ComplexNumber<T>[][] field = fractal.getField();
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                Complex1 current = field[i][j];
-                float[] hsb= rgb2hsb((int) current.real().getNumber() % 255, (int) current.imag().getNumber() % 255,125);
-/*
-                if (i == field.length/2 && j == field[i].length/2) {
-                    hsb = rgb2hsb(0,0,255);
-                } else {
-                    FixedPoint r = new FixedPoint(current.real().getNumber(), current.real().getScale());
-                    FixedPoint im = new FixedPoint(current.imag().getNumber(), current.imag().getScale());
-                    r.square();
-                    im.square();
-                    r.add(im);
+                ComplexNumber<T> current = field[i][j];
 
-                    if (Math.abs(r.getProperNumber()) > 4) {
-                        hsb = rgb2hsb(255, 255, 255);
-                    } else {
-                        hsb = rgb2hsb(0, 0, 0);
-                    }
-                }
-*/
-                drawRect(Color.getHSBColor(hsb[0], hsb[1], hsb[2]), j * size, i * size, size, size);
+                int[] temp = fractal.getColorField(i, j);
+                float[] hsb = RGBtoHSV(temp[0], temp[1], temp[2]);
+                hsb = Color.RGBtoHSB(temp[0], temp[1], temp[2], null);
+                drawRect(Color.getHSBColor(hsb[0], hsb[1], hsb[2]),
+                        j * size, i * size, size, size);
             }
         }
         repaint();
