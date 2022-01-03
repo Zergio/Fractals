@@ -1,5 +1,6 @@
 package fractals.fpnumbers;
 
+import fractals.fpnumbers.FPDecimal1;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ public class FixedPointDivideByTen {
     @Test
     public void divideByTenTest1() {
         long[] input = { 1, Long.MAX_VALUE };
-        long[] result = FPNumber1.divideByTen(input);
+        long[] result = FPDecimal1.divideByTen(input);
         System.out.println(result[0]);
         System.out.println(result[1]);
 
@@ -34,14 +35,14 @@ public class FixedPointDivideByTen {
         //1701411834604692317040171876053197783
         //17014118346046923168557044353161023
 
-        long[] result = FPNumber1.divideByTen(input);
+        long[] result = FPDecimal1.divideByTen(input);
         System.out.println(result[0]);
         System.out.println(result[1]);
 
         //110011001100110011001100110011001100110011001100110011001100
         //1011001100110011001100110011001100110011001100110011001100110011
         long[] input2 = {922337203685477580L, -5534023222112865485L};
-        long[] result2 = FPNumber1.divideByTen(input2);
+        long[] result2 = FPDecimal1.divideByTen(input2);
         System.out.println(result2[0]);
         System.out.println(result2[1]);
         //92233720368547758
@@ -49,7 +50,7 @@ public class FixedPointDivideByTen {
         //101000111101011100001010001111010111000010100011110101110
         //0001000010100011110101110000101000111101011100001010001111010111
         long[] input3 = {92233720368547758L, 1199038364791120855L};
-        long[] result3 = FPNumber1.divideByTen(input3);
+        long[] result3 = FPDecimal1.divideByTen(input3);
         System.out.println(result3[0]);
         System.out.println(result3[1]);
         //9223372036854775
@@ -57,7 +58,7 @@ public class FixedPointDivideByTen {
         //100000110001001001101110100101111000110101001111110111
         //1100111001010110000001000001100010010011011101001011110001101011
         long[] input4 = {9223372036854775L, -3578668350299653013L};
-        long[] result4 = FPNumber1.divideByTen(input4);
+        long[] result4 = FPDecimal1.divideByTen(input4);
         System.out.println(result4[0]);
         System.out.println(result4[1]);
         //11010001101101110001011101011000111000100001100101
@@ -67,7 +68,7 @@ public class FixedPointDivideByTen {
     @Test
     public void divideByTenTestNegative() {
         long[] input = { -1, -20 };
-        long[] result = FPNumber1.divideByTen(input);
+        long[] result = FPDecimal1.divideByTen(input);
         System.out.println(result[0]);
         System.out.println(result[1]);
 

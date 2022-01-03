@@ -6,6 +6,8 @@ public interface Fractal<T extends FPNumber<T>> {
 
     void setup();
 
+    void process(int steps);
+
     ComplexNumber<T>[][] getField();
 
     int[] getColorField(int i, int j);

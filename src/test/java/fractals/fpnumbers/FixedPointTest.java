@@ -7,57 +7,53 @@ public class FixedPointTest {
 
     @Test
     public void constructorTestPositiveFractional() {
-        FPNumber1 fixedPoint = new FPNumber1("2.345");
-        Assertions.assertEquals(2345, fixedPoint.getMantissa());
-        Assertions.assertEquals(-3, fixedPoint.getScale());
+        FPDecimal1 fixedPoint = new FPDecimal1("2.345").multiply(1000);
+        Assertions.assertEquals(2345, fixedPoint.getLong());
     }
 
     @Test
     public void constructorTestPositiveWhole() {
-        FPNumber1 fixedPoint = new FPNumber1("2");
-        Assertions.assertEquals(2, fixedPoint.getMantissa());
-        Assertions.assertEquals(0, fixedPoint.getScale());
+        FPDecimal1 fixedPoint = new FPDecimal1("2");
+        Assertions.assertEquals(2, fixedPoint.getLong());
     }
 
     @Test
     public void constructorTestNegativeFractional() {
-        FPNumber1 fixedPoint = new FPNumber1("-2.345");
-        Assertions.assertEquals(-2345, fixedPoint.getMantissa());
-        Assertions.assertEquals(-3, fixedPoint.getScale());
+        FPDecimal1 fixedPoint = new FPDecimal1("-2.345").multiply(1000);
+        Assertions.assertEquals(-2345, fixedPoint.getLong());
     }
 
     @Test
     public void constructorTestNegativeWhole() {
-        FPNumber1 fixedPoint = new FPNumber1("-2345");
-        Assertions.assertEquals(-2345, fixedPoint.getMantissa());
-        Assertions.assertEquals(0, fixedPoint.getScale());
+        FPDecimal1 fixedPoint = new FPDecimal1("-2345");
+        Assertions.assertEquals(-2345, fixedPoint.getLong());
     }
 
     @Test
     public void invalidMultiDotPositive() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            FPNumber1 fixedPoint = new FPNumber1("2.34.5");
+            FPDecimal1 fixedPoint = new FPDecimal1("2.34.5");
         });
     }
 
     @Test
     public void invalidMultiDotNegative() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            FPNumber1 fixedPoint = new FPNumber1("-2.34.5");
+            FPDecimal1 fixedPoint = new FPDecimal1("-2.34.5");
         });
     }
 
     @Test
     public void invalidMultiNegativeSymbols() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            FPNumber1 fixedPoint = new FPNumber1("-2.34-5");
+            FPDecimal1 fixedPoint = new FPDecimal1("-2.34-5");
         });
     }
 
     @Test
     public void invalidNegativeSymbolInWrongPlace() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            FPNumber1 fixedPoint = new FPNumber1("2-34.5");
+            FPDecimal1 fixedPoint = new FPDecimal1("2-34.5");
         });
     }
 }

@@ -2,24 +2,37 @@ package fractals.fpnumbers;
 
 import org.jetbrains.annotations.NotNull;
 
-public class FPNumber1 extends AbstractFPNumber<FPNumber1> {
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
-    FPNumber1(String number) {
+public class FPDecimal1 extends AbstractFPDecimal<FPDecimal1> {
+
+    FPDecimal1(String number) {
         super(number);
     }
 
-    FPNumber1(long number) {
+    FPDecimal1(long number) {
         super(number);
     }
 
-    FPNumber1(long number, long scale) {
+    FPDecimal1(long number, long scale) {
         super(number, scale);
     }
 
     @Override
-    public FPNumber1 multiply(FPNumber1 number) {
-        long[] parts = new long[]{Math.multiplyHigh(mantissa, number.getMantissa()),
-                mantissa * number.getMantissa()};
+    public FPDecimal1 multiply(FPDecimal1 number) {
+//        if (scale + number.scale < -40) {
+//            return Utils.DECIMAL_1_ZERO.clone();
+//        }
+//        BigDecimal dec1 = new BigDecimal(new BigInteger(String.valueOf(mantissa)), (int)-scale, Utils.CONTEXT);
+//        BigDecimal dec2 = new BigDecimal(new BigInteger(String.valueOf(number.mantissa)), (int)-number.scale, Utils.CONTEXT);
+//        double result = dec1.doubleValue() * dec2.doubleValue();
+//        mantissa = String.valueOf(result)
+//        scale = 0;
+//
+//        return new FPDecimal1(dec1.multiply(dec2).toPlainString());
+        long[] parts = new long[]{Math.multiplyHigh(mantissa, number.mantissa),
+                mantissa * number.mantissa};
 
         if (parts[0] != 0 && parts[0] != -1) {
             while (parts[0] > 0) {
@@ -28,24 +41,24 @@ public class FPNumber1 extends AbstractFPNumber<FPNumber1> {
             }
 
             if (parts[1] < 0
-                    && ((mantissa > 0 && number.getMantissa() > 0) || (mantissa < 0 && number.getMantissa() < 0))) {
+                    && ((mantissa > 0 && number.mantissa > 0) || (mantissa < 0 && number.mantissa < 0))) {
                 parts = divideByTen(parts);
                 scale++;
             }
         } else {
-            scale += number.getScale();
+            scale += number.scale;
         }
         mantissa = parts[1];
         return this;
     }
 
     @Override
-    public FPNumber1 multiply(long number) {
-        return multiply(new FPNumber1(number));
+    public FPDecimal1 multiply(long number) {
+        return multiply(new FPDecimal1(number));
     }
 
     public static long[] divideByTen(long[] input) {
-        long[] q = new long[] { input[0], input[1] }, r = new long[2];
+        long[] q = new long[] { input[0], input[1] };
         q = shiftRight(q, 1);               //  q = (NUMBER >> 1);
         q = add(q, shiftRight(q, 1));       //  q += (q >> 1);
         q = add(q, shiftRight(q, 4));       //  q += (q >> 4);
@@ -126,13 +139,13 @@ public class FPNumber1 extends AbstractFPNumber<FPNumber1> {
     }
 
     @Override
-    public FPNumber1 divide(FPNumber1 number) {
+    public FPDecimal1 divide(FPDecimal1 number) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public FPNumber1 clone() {
-        return new FPNumber1(mantissa, scale);
+    public FPDecimal1 clone() {
+        return new FPDecimal1(mantissa, scale);
     }
 
     private void checkForExtraZero() {

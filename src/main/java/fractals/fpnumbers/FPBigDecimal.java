@@ -24,21 +24,6 @@ public class FPBigDecimal implements FPNumber<FPBigDecimal> {
     }
 
     @Override
-    public long getMantissa() {
-        return decimal.unscaledValue().longValue();
-    }
-
-    @Override
-    public BigInteger getMantissaAsBigInteger() {
-        return decimal.unscaledValue();
-    }
-
-    @Override
-    public long getScale() {
-        return -decimal.scale();
-    }
-
-    @Override
     public FPBigDecimal add(FPBigDecimal number) {
         decimal = decimal.add(number.decimal, Utils.CONTEXT);
         return this;
@@ -58,7 +43,7 @@ public class FPBigDecimal implements FPNumber<FPBigDecimal> {
 
     @Override
     public FPBigDecimal multiply(long number) {
-        decimal = decimal.divide(new BigDecimal(number, Utils.CONTEXT), Utils.CONTEXT);
+        decimal = decimal.multiply(new BigDecimal(number, Utils.CONTEXT), Utils.CONTEXT);
         return this;
     }
 
@@ -70,13 +55,28 @@ public class FPBigDecimal implements FPNumber<FPBigDecimal> {
 
     @Override
     public FPBigDecimal square() {
-        decimal = decimal.multiply(Utils.TWO, Utils.CONTEXT);
+        decimal = decimal.multiply(decimal, Utils.CONTEXT);
         return this;
     }
 
+    BigDecimal MAX_LONG = new BigDecimal(Long.MAX_VALUE);
+    BigDecimal MIN_LONG = new BigDecimal(Long.MIN_VALUE);
+
     @Override
-    public long getScaledInteger() {
-        return new BigDecimal(decimal.unscaledValue()).movePointLeft(decimal.scale()).longValue();
+    public long getLong() {
+        if (decimal.signum() >= 0) {
+            if (decimal.compareTo(MAX_LONG) >= 0) {
+                return new BigDecimal(decimal.unscaledValue()).movePointLeft(decimal.scale()).longValue();
+            } else {
+                return decimal.longValue();
+            }
+        } else {
+            if (decimal.compareTo(MIN_LONG) < 0) {
+                return new BigDecimal(decimal.unscaledValue()).movePointLeft(decimal.scale()).longValue();
+            } else {
+                return decimal.longValue();
+            }
+        }
     }
 
     @Override

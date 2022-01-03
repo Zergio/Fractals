@@ -1,37 +1,43 @@
 package fractals.fpnumbers;
 
 public class ComplexNumber<T extends FPNumber<T>> {
-    private final T x, y;
+    private final T r;
+    private T i;
 
     public ComplexNumber(T real, T im) {
-        x = real;
-        y = im;
+        r = real;
+        i = im;
     }
 
     public T real() {
-        return x;
+        return r;
     }
 
     public T im() {
-        return y;
+        return i;
+    }
+
+    public void setImaginary(T imaginary) {
+        i = imaginary;
     }
 
     public void add(ComplexNumber<T> number) {
-        x.add(number.real());
-        y.add(number.im());
+        r.add(number.real());
+        i.add(number.im());
     }
 
     public void subtract(ComplexNumber<T> number) {
-        x.subtract(number.real());
-        y.subtract(number.im());
+        r.subtract(number.real());
+        i.subtract(number.im());
     }
 
     public void square() {
-        T temp = x.clone();
-        x.square();
-        y.square();
-        x.subtract(y);
-        y.multiply(temp);
-        x.multiply(2);
+        T rCloned = r.clone();
+        T iCloned = i.clone();
+        r.square(); // real part calculation
+        i.square();
+        r.subtract(i);
+
+        i = iCloned.multiply(rCloned).multiply(2); // imaginary part calculation
     }
 }

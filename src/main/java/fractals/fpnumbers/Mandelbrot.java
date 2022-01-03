@@ -5,14 +5,14 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
     private final ComplexNumber<T>[][] baseField;
     public final int[][][] colorField;
     private final F numberFactory;
-    private final int heightOfField, widthOfField;
+    private final T heightOfField, widthOfField;
 
     public Mandelbrot(F numberFactory, int heightOfField, int widthOfField) {
         this.numberFactory = numberFactory;
-        this.widthOfField = widthOfField;
-        this.heightOfField = heightOfField;
-        baseField = new ComplexNumber[heightOfField][widthOfField];
-        colorField = new int[heightOfField][widthOfField][3];
+        this.widthOfField = numberFactory.createFPNumber(widthOfField);
+        this.heightOfField = numberFactory.createFPNumber(heightOfField);
+        baseField = new ComplexNumber[widthOfField][heightOfField];
+        colorField = new int[widthOfField][heightOfField][3];
     }
 
     public ComplexNumber<T> step(ComplexNumber<T> z, ComplexNumber<T> c) {
@@ -39,39 +39,56 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
     }
 
     public void process(int iterations) {
-        double xBeginning = -2;
-        double xEnd = 0.5;
-        double yBeginning = -1.12;
-        double yEnd = 1.12;
+        var xBeginning = numberFactory.createFPNumber("-2");
+        var yBeginning = numberFactory.createFPNumber("-1.12");
 
-        double xRange = Math.abs(xBeginning) + Math.abs(xEnd);
-        double yRange = Math.abs(yBeginning) + Math.abs(yEnd);
+        var xRange = numberFactory.createFPNumber("2.5");
+        var yRange = numberFactory.createFPNumber("2.33");
 
-        for (int i = 0; i < heightOfField; i++) {
-            String x1 = String.valueOf(xBeginning + ((xRange * i) / heightOfField));
-            var x = numberFactory.createFPNumber(x1);
-            for (int j = 0; j < widthOfField; j++) {
-                String y1 = String.valueOf(yBeginning + ((yRange * j) / widthOfField));
-                var y = numberFactory.createFPNumber(y1);
-                ComplexNumber<T> xy = new ComplexNumber<T>(x, y);
+        var ZERO = numberFactory.createFPNumber(0L);
+
+        ComplexNumber<T> xy = new ComplexNumber<>(xBeginning.clone(), yBeginning.clone());
+
+        long width = widthOfField.getLong();
+        long height = heightOfField.getLong();
+
+        T realStep = numberFactory.createFPNumber(Double.valueOf(2.5/width).toString());
+
+        T imaginaryStep = numberFactory.createFPNumber(Double.valueOf(2.33/height).toString());
+
+        int[] colors = new int[iterations];
+        for (int i = 0; i < iterations; i++) {
+            colors[i] = (255 / iterations) * i;
+            //colors[i] = (int)Math.pow(Math.pow(255, 1.0/iterations), i);
+        }
+        for (int i = 0; i < width; i++) {
+            //var x = xBeginning.add((xRange.multiply(i)).divide(heightOfField));
+            xy.setImaginary(yBeginning.clone());
+            for (int j = 0; j < height; j++) {
+                //var y = yBeginning.add((yRange.multiply(j)).divide(widthOfField));
                 ComplexNumber<T> current = baseField[i][j];
-                colorField[i][j][0] = 0;
-                colorField[i][j][1] = 0;
-                colorField[i][j][2] = 0;
+                colorField[i][j] = new int[]{0, 0, 0};
                 for (int num = 0; num < iterations; num++) {
                     current.square();
                     current.add(xy);
-                    if (Math.abs(current.real().getScaledInteger() + current.im().getScaledInteger()) >= 4) {
-                        colorField[i][j][0] = ((255 / iterations) * num);
-                        colorField[i][j][1] = 255;
-                        colorField[i][j][2] = 255;
+                    var im = current.im()
+                            .clone()
+                            .square();
+                    var r = current.real()
+                            .clone()
+                            .square()
+                            .subtract(im);
+                    if (Math.abs(r.getLong() + im.getLong()) >= 4) {
+                        colorField[i][j] = new int[]{ colors[num], colors[num], 255};
                         break;
                     }
                 }
+                xy.im().add(imaginaryStep);
             }
+            xy.real().add(realStep);
         }
     }
-
+/*
     public void processOLD(int iterations) {
         var decHeight = numberFactory.createFPNumber(heightOfField);
         var decWidth = numberFactory.createFPNumber(widthOfField);
@@ -122,4 +139,5 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
             }
         }
     }
+ */
 }

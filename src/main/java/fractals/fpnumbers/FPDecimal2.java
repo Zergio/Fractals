@@ -1,23 +1,23 @@
 package fractals.fpnumbers;
 
-public class FPNumber2 extends AbstractFPNumber<FPNumber2> {
+public class FPDecimal2 extends AbstractFPDecimal<FPDecimal2> {
 
-    FPNumber2(String number) {
+    FPDecimal2(String number) {
         super(number);
     }
 
-    FPNumber2(long number) {
+    FPDecimal2(long number) {
         super(number);
     }
 
-    FPNumber2(long number, long scale) {
+    FPDecimal2(long number, long scale) {
         super(number, scale);
     }
 
     @Override
-    public FPNumber2 multiply(FPNumber2 number) {
-        long high = Math.multiplyHigh(mantissa, number.getMantissa());
-        long factor = number.getMantissa();
+    public FPDecimal2 multiply(FPDecimal2 number) {
+        long high = Math.multiplyHigh(mantissa, number.mantissa);
+        long factor = number.mantissa;
         if (high != 0 && high != -1) { // left 64bit is empty
             int digits = getNumberOfDigits(high);
             scale += digits;
@@ -26,49 +26,49 @@ public class FPNumber2 extends AbstractFPNumber<FPNumber2> {
                 ratio = mantissa / factor;
                 int ratioDigits = getNumberOfDigits(ratio) - 1;
                 if (ratioDigits >= digits) {
-                    mantissa /= POWERS_OF_TEN[digits]; //Return to this for optimization
+                    mantissa /= Utils.POWERS_OF_TEN[digits]; //Return to this for optimization
                 } else {
                     int shift = (digits - ratioDigits) >> 1;
-                    mantissa /= POWERS_OF_TEN[digits - shift]; //Return to this for optimization
-                    factor /= POWERS_OF_TEN[shift];
+                    mantissa /= Utils.POWERS_OF_TEN[digits - shift]; //Return to this for optimization
+                    factor /= Utils.POWERS_OF_TEN[shift];
                 }
             } else {
-                ratio = number.getMantissa() / mantissa;
+                ratio = number.mantissa / mantissa;
                 int ratioDigits = getNumberOfDigits(ratio) - 1;
                 if (ratioDigits >= digits) {
-                    factor /= POWERS_OF_TEN[digits]; //Return to this for optimization
+                    factor /= Utils.POWERS_OF_TEN[digits]; //Return to this for optimization
                 } else {
                     int shift = (digits - ratioDigits) >> 1;
-                    factor /= POWERS_OF_TEN[digits - shift]; //Return to this for optimization
-                    mantissa /= POWERS_OF_TEN[shift];
+                    factor /= Utils.POWERS_OF_TEN[digits - shift]; //Return to this for optimization
+                    mantissa /= Utils.POWERS_OF_TEN[shift];
                 }
             }
 
         } else {
-            scale += number.getScale();
+            scale += number.scale;
         }
         mantissa *= factor;
         return this;
     }
 
     @Override
-    public FPNumber2 multiply(long number) {
-        return multiply(new FPNumber2(number));
+    public FPDecimal2 multiply(long number) {
+        return multiply(new FPDecimal2(number));
     }
 
     @Override
-    public FPNumber2 divide(FPNumber2 number) {
+    public FPDecimal2 divide(FPDecimal2 number) {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public FPNumber2 clone() {
-        return new FPNumber2(mantissa, scale);
+    public FPDecimal2 clone() {
+        return new FPDecimal2(mantissa, scale);
     }
 
     public int getNumberOfDigits(long number) {
         int result, step, count;
-        if (number >= POWERS_OF_TEN[16] || number <= NEG_POWERS_OF_TEN[16]) {
+        if (number >= Utils.POWERS_OF_TEN[16] || number <= Utils.NEG_POWERS_OF_TEN[16]) {
             result = 18;
             step = 1;
             count = 2;
@@ -82,12 +82,12 @@ public class FPNumber2 extends AbstractFPNumber<FPNumber2> {
                 if (result == 19) {
                     break;
                 }
-                if (number >= POWERS_OF_TEN[result]) {
+                if (number >= Utils.POWERS_OF_TEN[result]) {
                     result += step;
                     if (step == 0) {
                         return result + 1;
                     }
-                } else if (number < POWERS_OF_TEN[result]) {
+                } else if (number < Utils.POWERS_OF_TEN[result]) {
                     result -= step;
                 }
                 step >>= 1;
@@ -97,12 +97,12 @@ public class FPNumber2 extends AbstractFPNumber<FPNumber2> {
                 if (result == 19) {
                     break;
                 }
-                if (number <= NEG_POWERS_OF_TEN[result]) {
+                if (number <= Utils.NEG_POWERS_OF_TEN[result]) {
                     result += step;
                     if (step == 0) {
                         return result + 1;
                     }
-                } else if (number > NEG_POWERS_OF_TEN[result]) {
+                } else if (number > Utils.NEG_POWERS_OF_TEN[result]) {
                     result -= step;
                 }
                 step >>= 1;

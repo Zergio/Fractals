@@ -7,15 +7,15 @@ public class FixedPointPowTest {
 
     @Test
     public void powPositive() {
-        FPNumber1 num = new FPNumber1("1.234");
+        FPDecimal1 num = new FPDecimal1("1.234");
         num.square().multiply(1000000);
-        Assertions.assertEquals(1522756, num.getScaledInteger());
+        Assertions.assertEquals(1522756, num.getLong());
     }
 
     @Test
     public void powNegative() {
-        FPNumber1 num = new FPNumber1("-1.234");
+        FPDecimal1 num = new FPDecimal1("-1.234");
         num.square().multiply(1000000);
-        Assertions.assertEquals(1522756, num.getScaledInteger());
+        Assertions.assertEquals(1522756, num.getLong());
     }
 }

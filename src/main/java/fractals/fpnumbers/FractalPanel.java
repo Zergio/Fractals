@@ -108,13 +108,11 @@ public class FractalPanel<T extends FPNumber<T>> extends JPanel {
         ComplexNumber<T>[][] field = fractal.getField();
         for (int i = 0; i < field.length; i++) {
             for (int j = 0; j < field[i].length; j++) {
-                ComplexNumber<T> current = field[i][j];
-
                 int[] temp = fractal.getColorField(i, j);
                 float[] hsb = RGBtoHSV(temp[0], temp[1], temp[2]);
                 hsb = Color.RGBtoHSB(temp[0], temp[1], temp[2], null);
                 drawRect(Color.getHSBColor(hsb[0], hsb[1], hsb[2]),
-                        j * size, i * size, size, size);
+                        i * size, j * size, size, size);
             }
         }
         repaint();
@@ -122,13 +120,13 @@ public class FractalPanel<T extends FPNumber<T>> extends JPanel {
 
     public void drawRect(Color c, int x1, int y1, int width, int height) {
         int color = c.getRGB();
-        canvas.setRGB(x1, y1, color);
+//        canvas.setRGB(x1, y1, color);
         // Implement rectangle drawing
-//        for (int x = x1; x < x1 + width; x++) {
-//            for (int y = y1; y < y1 + height; y++) {
-//                canvas.setRGB(x, y, color);
-//            }
-//        }
+        for (int x = x1; x < x1 + width; x++) {
+            for (int y = y1; y < y1 + height; y++) {
+                canvas.setRGB(x, y, color);
+            }
+        }
 //        repaint();
     }
 }
