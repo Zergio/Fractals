@@ -38,13 +38,7 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
         return colorField[i][j];
     }
 
-    public void process(int iterations) {
-        var xBeginning = numberFactory.createFPNumber("-2");
-        var yBeginning = numberFactory.createFPNumber("-1.12");
-
-        var xRange = numberFactory.createFPNumber("2.5");
-        var yRange = numberFactory.createFPNumber("2.33");
-
+    public void process(int iterations, T xBeginning, T yBeginning, T xRange, T yRange) {
         var ZERO = numberFactory.createFPNumber(0L);
 
         ComplexNumber<T> xy = new ComplexNumber<>(xBeginning.clone(), yBeginning.clone());
@@ -52,13 +46,19 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
         long width = widthOfField.getLong();
         long height = heightOfField.getLong();
 
-        T realStep = numberFactory.createFPNumber(Double.valueOf(2.5/width).toString());
+        //Decimal1 division is not implemented
+        T realStep = xRange.divide(widthOfField);
 
-        T imaginaryStep = numberFactory.createFPNumber(Double.valueOf(2.33/height).toString());
+        T imaginaryStep = yRange.divide(heightOfField);
 
-        int[] colors = new int[iterations];
+        double[] colors = new double[iterations];
+
         for (int i = 0; i < iterations; i++) {
-            colors[i] = (255 / iterations) * i;
+            //if (iterations >= 255.0) {
+            //    colors[i] = i % 255;
+            //} else {
+                colors[i] = (255.0 / iterations) * i;
+            //}
             //colors[i] = (int)Math.pow(Math.pow(255, 1.0/iterations), i);
         }
         for (int i = 0; i < width; i++) {
@@ -79,13 +79,14 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
                             .square()
                             .subtract(im);
                     if (Math.abs(r.getLong() + im.getLong()) >= 4) {
-                        colorField[i][j] = new int[]{ colors[num], colors[num], 255};
+                        colorField[i][j] = new int[]{ (int) colors[num], (int) colors[num], 255};
                         break;
                     }
                 }
                 xy.im().add(imaginaryStep);
             }
             xy.real().add(realStep);
+            System.out.println("Progress: " + (i * 100) / width + "%, " + i);
         }
     }
 /*

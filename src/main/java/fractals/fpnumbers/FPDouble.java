@@ -1,6 +1,7 @@
 package fractals.fpnumbers;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 
 public class FPDouble implements FPNumber<FPDouble> {
     private double internalValue;
@@ -68,5 +69,11 @@ public class FPDouble implements FPNumber<FPDouble> {
     @Override
     public FPDouble clone() {
         return new FPDouble(internalValue);
+    }
+
+    @Override
+    public String toString() {
+        DecimalFormat formatter = new DecimalFormat("0.00000000000000000"); // Here you can also deal with rounding if you wish..
+        return formatter.format(internalValue);
     }
 }

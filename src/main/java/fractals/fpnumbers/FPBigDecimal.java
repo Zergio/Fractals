@@ -83,4 +83,9 @@ public class FPBigDecimal implements FPNumber<FPBigDecimal> {
     public FPBigDecimal clone() {
         return new FPBigDecimal(new BigDecimal(decimal.unscaledValue(), decimal.scale(), Utils.CONTEXT));
     }
+
+    @Override
+    public String toString() {
+        return decimal.toPlainString();
+    }
 }

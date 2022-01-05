@@ -10,4 +10,9 @@ public class FPBigDecimalFactory extends FPNumberFactory<FPBigDecimal> {
     public FPBigDecimal createFPNumber(String number) {
         return new FPBigDecimal(number);
     }
+
+    @Override
+    public FPBigDecimal createFPNumber(long longPart, long scalePart) {
+        return new FPBigDecimal(longPart, scalePart);
+    }
 }
