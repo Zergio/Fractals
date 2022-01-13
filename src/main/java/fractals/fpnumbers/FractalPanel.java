@@ -120,13 +120,11 @@ public class FractalPanel<T extends FPNumber<T>> extends JPanel {
 
     public void drawRect(Color c, int x1, int y1, int width, int height) {
         int color = c.getRGB();
-//        canvas.setRGB(x1, y1, color);
         // Implement rectangle drawing
         for (int x = x1; x < x1 + width; x++) {
             for (int y = y1; y < y1 + height; y++) {
                 canvas.setRGB(x, y, color);
             }
         }
-//        repaint();
     }
 }

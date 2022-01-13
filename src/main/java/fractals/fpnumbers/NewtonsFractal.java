@@ -1,14 +1,16 @@
 package fractals.fpnumbers;
 
-public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> implements Fractal<T> {
+public class NewtonsFractal <T extends FPNumber<T>, F extends FPNumberFactory<T>> implements Fractal<T> {
 
     private final ComplexNumber<T>[][] baseField;
     public final int[][][] colorField;
     private final F numberFactory;
     private final T heightOfField, widthOfField;
+    private final T[] fraction;
 
-    public Mandelbrot(F numberFactory, int heightOfField, int widthOfField) {
+    public NewtonsFractal(F numberFactory, int heightOfField, int widthOfField, T[] fraction) {
         this.numberFactory = numberFactory;
+        this.fraction = fraction;
         this.widthOfField = numberFactory.createFPNumber(widthOfField);
         this.heightOfField = numberFactory.createFPNumber(heightOfField);
         baseField = new ComplexNumber[widthOfField][heightOfField];
@@ -16,9 +18,33 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
     }
 
     public ComplexNumber<T> step(ComplexNumber<T> z, ComplexNumber<T> c) {
-        z.square();
-        z.add(c);
-        return z;
+        ComplexNumber<T> result = new ComplexNumber<>(numberFactory.createFPNumber(0L), numberFactory.createFPNumber(0L));
+        for(int i = 0; i < fraction.length; i++) {
+            result.add(deriveAndEvaluate(c, fraction[i]));
+        }
+        return result;
+    }
+
+    /**
+     * Derives x ^ num, and evaluates it.
+     * @param x input
+     * @param num power
+     * @return num * x ^ (num - 1)
+     */
+    private ComplexNumber<T> deriveAndEvaluate(ComplexNumber<T> x, T num) {
+        ComplexNumber<T> number = new ComplexNumber<>(num, numberFactory.createFPNumber(0L));
+        if ((x.real().getLong() == 0L && x.im().getLong() == 0L) || num.getLong() == 0L) {
+            return new ComplexNumber<>(numberFactory.createFPNumber(0L), numberFactory.createFPNumber(0L));
+        } else if (num.getLong() == 1L) {
+            return new ComplexNumber<>(numberFactory.createFPNumber(1L), numberFactory.createFPNumber(0L));
+        } else {
+            ComplexNumber newX = x.clone();
+            for (int i = 0; i < num.getLong() - 1; i++) {
+                newX.multiply(x);
+            }
+            number.multiply(newX);
+            return number;
+        }
     }
 
     public void setup() {
@@ -53,19 +79,12 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
 
         double[] colors = new double[iterations];
 
-//        for (int i = 0; i < iterations; i++) {
-//            colors[i] = Math.pow(255.0, (double)i/iterations);
-//        }
-
         for (int i = 0; i < iterations; i++) {
-            colors[i] = 255.0 * i/iterations;
+            colors[i] = (255.0 / iterations) * i;
         }
 
         for (int i = 0; i < width; i++) {
             xy.setImaginary(yBeginning.clone());
-            //System.out.println(xy.real().toString());
-            //System.out.println(xy.im().toString());
-            //System.out.println();
             for (int j = 0; j < height; j++) {
                 ComplexNumber<T> current = baseField[i][j];
                 colorField[i][j] = new int[]{0, 0, 0};
@@ -79,19 +98,15 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
                             .clone()
                             .square()
                             .subtract(im);
-                    T sum = r.clone().add(im);
-                    long abs = Math.abs(sum.getLong());
-                    if (abs >= 4) {
-                        colorField[i][j] = new int[]{ (int) colors[(int)Math.min((abs - 4) / 81.0, iterations - 2)], (int) colors[num], 255};
+                    if (Math.abs(r.getLong() + im.getLong()) >= 4) {
+                        colorField[i][j] = new int[]{ (int) colors[num], (int) colors[num], 255};
                         break;
                     }
                 }
                 xy.im().add(imaginaryStep);
             }
             xy.real().add(realStep);
-            //if ((i * 100) / width > ((i - 1) * 100) / width) {
-            //    System.out.println("Progress: " + (i * 100) / width + "%, " + i);
-            //}
+            System.out.println("Progress: " + (i * 100) / width + "%, " + i);
         }
     }
 }

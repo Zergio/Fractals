@@ -26,6 +26,11 @@ public class ComplexNumber<T extends FPNumber<T>> {
         i.add(number.im());
     }
 
+    public void multiply(ComplexNumber<T> number) {
+        r.multiply(number.real());
+        i.multiply(number.im());
+    }
+
     public void subtract(ComplexNumber<T> number) {
         r.subtract(number.real());
         i.subtract(number.im());
@@ -39,5 +44,9 @@ public class ComplexNumber<T extends FPNumber<T>> {
         r.subtract(i);
 
         i = iCloned.multiply(rCloned).multiply(2); // imaginary part calculation
+    }
+
+    public ComplexNumber clone() {
+        return new ComplexNumber(r, i);
     }
 }
