@@ -64,7 +64,7 @@ public class NewtonsFractal <T extends FPNumber<T>, F extends FPNumberFactory<T>
         return colorField[i][j];
     }
 
-    public void process(int iterations, T xBeginning, T yBeginning, T xRange, T yRange) {
+    public void process(int iterations, T xBeginning, T yBeginning, T xRange, T yRange, int cores) {
         var ZERO = numberFactory.createFPNumber(0L);
 
         ComplexNumber<T> xy = new ComplexNumber<>(xBeginning.clone(), yBeginning.clone());

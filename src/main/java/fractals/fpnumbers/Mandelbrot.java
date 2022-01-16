@@ -6,6 +6,7 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
     public final int[][][] colorField;
     private final F numberFactory;
     private final T heightOfField, widthOfField;
+    private double[] colors;
 
     public Mandelbrot(F numberFactory, int heightOfField, int widthOfField) {
         this.numberFactory = numberFactory;
@@ -38,10 +39,10 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
         return colorField[i][j];
     }
 
-    public void process(int iterations, T xBeginning, T yBeginning, T xRange, T yRange) {
+    public void process(int iterations, T xBeginning, T yBeginning, T xRange, T yRange, int cores) throws InterruptedException {
         var ZERO = numberFactory.createFPNumber(0L);
 
-        ComplexNumber<T> xy = new ComplexNumber<>(xBeginning.clone(), yBeginning.clone());
+        //ComplexNumber<T> xy = new ComplexNumber<>(xBeginning.clone(), yBeginning.clone());
 
         long width = widthOfField.getLong();
         long height = heightOfField.getLong();
@@ -51,47 +52,90 @@ public class Mandelbrot<T extends FPNumber<T>, F extends FPNumberFactory<T>> imp
 
         T imaginaryStep = yRange.divide(heightOfField);
 
-        double[] colors = new double[iterations];
-
-//        for (int i = 0; i < iterations; i++) {
-//            colors[i] = Math.pow(255.0, (double)i/iterations);
-//        }
+        colors = new double[iterations];
 
         for (int i = 0; i < iterations; i++) {
-            colors[i] = 255.0 * i/iterations;
+            colors[i] = 255.0 * i / iterations;
         }
 
-        for (int i = 0; i < width; i++) {
-            xy.setImaginary(yBeginning.clone());
-            //System.out.println(xy.real().toString());
-            //System.out.println(xy.im().toString());
-            //System.out.println();
-            for (int j = 0; j < height; j++) {
+        Thread[] threads = new Thread[cores];
+        for (int i = 0; i < cores; i++) {
+            int finalI = i;
+            Thread thread = new Thread(() -> subProcess(cores, width, height, iterations, realStep.clone(),
+                    imaginaryStep.clone(), yBeginning.clone(), xBeginning.clone(), finalI));
+            threads[i] = thread;
+            thread.start();
+        }
+        for (int i = 0; i < cores; i++) {
+            threads[i].join();
+        }
+    }
+
+    private void subProcess(int numberOfCores, long width, long height, int iterations,
+                            T realStep, T imaginaryStep, T yBeginning, T xBeginning, int coreIndex) {
+        for (int i = 0; i < width * height / numberOfCores; i++) {
+            int j = i * numberOfCores + coreIndex;
+            int x = (int) (j % width);
+            int y = (int) (j / width);
+            ComplexNumber<T> current = baseField[x][y];
+            colorField[x][y] = new int[]{0, 0, 0};
+            for (int num = 0; num < iterations; num++) {
+                current.square();
+                current.add(new ComplexNumber<>(
+                        realStep.clone()
+                                .multiply(x)
+                                .add(xBeginning),
+                        imaginaryStep.clone()
+                                .multiply(y)
+                                .add(yBeginning)));
+                var im = current.im().clone()
+                        .square();
+                var r = current.real().clone()
+                        .square()
+                        .subtract(im);
+                T sum = r.clone().add(im);
+                long abs = Math.abs(sum.getLong());
+                if (abs >= 4) {
+                    colorField[x][y] = new int[]{
+                            (int) colors[(int)Math.min((abs - 4) / 81.0, iterations - 2)],
+                            (int) colors[num], 255
+                    };
+                    break;
+                }
+            }
+        }
+    }
+    /*
+    private void subProcess(int startI, int startJ, int skipEvery, long width, long height, int iterations,
+                            ComplexNumber<T> xy, T realStep, T imaginaryStep, T xRange, T yRange, T yBeginning) {
+        for (int i = startI; i < width; i ++) {
+            xy.setImaginary(yBeginning.clone()
+                    .add(imaginaryStep.clone()
+                            .multiply(startJ)));
+            for (int j = startJ; j < height; j += skipEvery) {
                 ComplexNumber<T> current = baseField[i][j];
                 colorField[i][j] = new int[]{0, 0, 0};
                 for (int num = 0; num < iterations; num++) {
                     current.square();
                     current.add(xy);
-                    var im = current.im()
-                            .clone()
+                    var im = current.im().clone()
                             .square();
-                    var r = current.real()
-                            .clone()
+                    var r = current.real().clone()
                             .square()
                             .subtract(im);
                     T sum = r.clone().add(im);
                     long abs = Math.abs(sum.getLong());
                     if (abs >= 4) {
-                        colorField[i][j] = new int[]{ (int) colors[(int)Math.min((abs - 4) / 81.0, iterations - 2)], (int) colors[num], 255};
+                        colorField[i][j] = new int[]{
+                                (int) colors[(int)Math.min((abs - 4) / 81.0, iterations - 2)],
+                                (int) colors[num], 255
+                        };
                         break;
                     }
                 }
                 xy.im().add(imaginaryStep);
             }
             xy.real().add(realStep);
-            //if ((i * 100) / width > ((i - 1) * 100) / width) {
-            //    System.out.println("Progress: " + (i * 100) / width + "%, " + i);
-            //}
         }
-    }
+    }*/
 }

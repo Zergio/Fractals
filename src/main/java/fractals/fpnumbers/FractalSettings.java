@@ -3,7 +3,7 @@ package fractals.fpnumbers;
 public final class FractalSettings<T extends FPNumber<T>, F extends FPNumberFactory<T>> {
     final int SIZE;
 
-    final T zoom;
+    T zoom;
 
     final int heightOfField;
 
@@ -12,6 +12,8 @@ public final class FractalSettings<T extends FPNumber<T>, F extends FPNumberFact
     final int width;
 
     final int height;
+
+    final int cores;
 
     final Fractal<T> fractal;
 
@@ -29,7 +31,7 @@ public final class FractalSettings<T extends FPNumber<T>, F extends FPNumberFact
 
     public FractalSettings(Fractal<T> fractal, F numberFactory, int heightOfField, int widthOfField,
                            String xBeginning, String yBeginning, String xRange, String yRange, int size,
-                           double zoom) {
+                           int cores, double zoom) {
         this.SIZE = size;
         this.fractal = fractal;
         this.numberFactory = numberFactory;
@@ -42,6 +44,7 @@ public final class FractalSettings<T extends FPNumber<T>, F extends FPNumberFact
         this.yBeginning = numberFactory.createFPNumber(yBeginning);
         this.xRange = numberFactory.createFPNumber(xRange);
         this.yRange = numberFactory.createFPNumber(yRange);
+        this.cores = cores;
         this.zoom = numberFactory.createFPNumber(String.valueOf(zoom));
     }
 }
