@@ -65,6 +65,6 @@ public class FPAPFloat implements FPNumber<FPAPFloat> {
 
     @Override
     public String toString() {
-        return internalValue.toString();
+        return internalValue.toString(true);
     }
 }

@@ -20,7 +20,7 @@ public class ProcessingThread<T extends FPNumber<T>> extends Thread implements C
     private T xBeginning;
     private T yBeginning;
 
-    private CountDownLatch latch;
+    private final CountDownLatch latch;
 
     public ProcessingThread(Fractal<T> fractal, int cores, int core, int width, int height, CountDownLatch latch) {
         this.cores = cores;

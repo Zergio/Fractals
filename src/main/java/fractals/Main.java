@@ -8,11 +8,13 @@ import java.awt.event.*;
 
 public class Main extends JFrame {
 
-    static final int widthOfField = 200;
+    static final int widthOfField = 320;
 
-    static final int heightOfField = 150;
+    static final int heightOfField = 240;
 
-    static int stepCorrection = 0;
+    static int stepCorrection = 5;
+
+    static int maxSteps = 1200;
 
     static int cores = 16; //Runtime.getRuntime().availableProcessors();
 
@@ -47,10 +49,10 @@ public class Main extends JFrame {
 
     private final static FractalSettings<FPBigDecimal, FPBigDecimalFactory> settings2 =
             new FractalSettings<>(fractal2, new FPBigDecimalFactory(), heightOfField, widthOfField,
-                    "-0.7464585640370714728020029073090819915136907735423331583846831546",
-                    "-0.09607183553858121395094237045850061849715898840251270877296884274",
-                    "0.000000000000000000004542782929748361478509090702116361629763022022102364399019339143",
-                    "0.000000000000000000004542782929748361478509090702116361629763022022102364399019339143",
+                    "-0.7464585640370714728020151719694677211356460643704035878034230594540471757998294197099276965444244443",
+                    "-0.09607183553858121395093281081893726822082010091561231035430727573308878485144667538950203922583291324",
+                    "0.0000000000000000000000000000002392130968880201238706966372074177214499050143026162508468875730780726198207879747335498228241523925",
+                    "0.0000000000000000000000000000003189507958506934984942621829432236285998733524034883344625167641040968264277172996447330970988698567",
                     size, cores, 1, -500, 930);
 
     private final static FractalSettings<FPQuadruple, FPQuadrupleFactory> settings4 =
@@ -71,16 +73,26 @@ public class Main extends JFrame {
 
     private final static FractalSettings<FPAPFloat, FPAPFloatFactory> settings6 =
             new FractalSettings<>(fractal5, new FPAPFloatFactory(), heightOfField, widthOfField,
-                    "-0.7464585640370714728020029073090819915136907735423331583846831546",
-                    "-0.09607183553858121395094237045850061849715898840251270877296884274",
-                    "0.000000000000000000004542782929748361478509090702116361629763022022102364399019339143",
-                    "0.000000000000000000004542782929748361478509090702116361629763022022102364399019339143",
-                    size, cores, 1, -500, 930);
+                    "-0.7464585640370714728020151719694677211356460643704035878034230594540471757998294197099276965444244443",
+                    "-0.09607183553858121395093281081893726822082010091561231035430727573308878485144667538950203922583291324",
+                    "0.0000000000000000000000000000002392130968880201238706966372074177214499050143026162508468875730780726198207879747335498228241523925",
+                    "0.0000000000000000000000000000003189507958506934984942621829432236285998733524034883344625167641040968264277172996447330970988698567",
+                    size, cores, 1, -700, 1347);
+
+    private final static FractalSettings<FPAPFloat, FPAPFloatFactory> settings7 =
+            new FractalSettings<>(fractal5, new FPAPFloatFactory(), heightOfField, widthOfField,
+                    "-2.99090922573827030",
+                    "-1.7224008373128232",
+                    "4.0",
+                    "4.0",
+                    size, cores, 1, 0, 50);
 
     //private final static FractalSettings<FPBigDecimal, FPBigDecimalFactory> settings = settings2;
     //private final static FractalSettings<FPBigDecimal, FPBigDecimalFactory> settings = settings2;
-    //private final static FractalSettings<FPDouble, FPDoubleFactory> settings = settings1;
-    private final static FractalSettings<FPAPFloat, FPAPFloatFactory> settings = settings6;
+    private final static FractalSettings<FPDouble, FPDoubleFactory> settings = settings1;
+    //private final static FractalSettings<FPQuadruple, FPQuadrupleFactory> settings = settings4;
+    //private final static FractalSettings<FPAPFloat, FPAPFloatFactory> settings = settings6;
+    //private final static FractalSettings<FPAPFloat, FPAPFloatFactory> settings = settings7;
 
     static <T extends Exception> void hideException(RunnableWithException<T> runnable) {
         try {
@@ -193,7 +205,7 @@ public class Main extends JFrame {
     private static void zoomIn() throws InterruptedException {
         settings.zoom = settings.numberFactory.createFPNumber("0.909090909090909");
         settings.zoomSteps--;
-        settings.steps = Math.max(Math.max((int)Math.pow(-settings.zoomSteps, 1.1), 50), settings.steps) + stepCorrection;
+        settings.steps = Math.min(Math.max(Math.max((int)Math.pow(-settings.zoomSteps, 1.2), 50), settings.steps) + stepCorrection, maxSteps);
         generateAndPaint(settings.fractal, settings.panel, settings.steps,
                 settings.xBeginning
                         .add((settings.xRange.clone()
@@ -216,7 +228,7 @@ public class Main extends JFrame {
     private static void zoomOut() throws InterruptedException {
         settings.zoom = settings.numberFactory.createFPNumber("1.1");
         settings.zoomSteps++;
-        settings.steps = Math.max(Math.max((int)Math.pow(-settings.zoomSteps, 1.1), 50), settings.zoomSteps) + stepCorrection;
+        settings.steps = Math.min(Math.max(Math.max((int)Math.pow(-settings.zoomSteps, 1.2), 50), settings.steps) + stepCorrection, maxSteps);
         generateAndPaint(settings.fractal, settings.panel, settings.steps,
                 settings.xBeginning
                         .add((settings.xRange.clone()
@@ -262,14 +274,14 @@ public class Main extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addKeyListener(keyListen);
 
-        generateAndPaint(settings.fractal, settings.panel, settings.steps, settings.xBeginning, settings.yBeginning, settings.xRange, settings.yRange, cores);
-        printState();
+        //generateAndPaint(settings.fractal, settings.panel, settings.steps, settings.xBeginning, settings.yBeginning, settings.xRange, settings.yRange, cores);
+        //printState();
 
-        // int start = 1;
-        // int max = 330;
-        // for (int i = start; i < max; i++) {
-        //     zoomIn();
-        // }
+         int start = 0;
+         int max = 330;
+         for (int i = start; i < max; i++) {
+             zoomIn();
+         }
     }
 
     private static <T extends FPNumber<T>> void generateAndPaint(Fractal<T> fractal, FractalPanel<T> panel, int steps,

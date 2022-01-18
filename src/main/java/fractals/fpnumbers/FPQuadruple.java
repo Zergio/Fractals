@@ -60,7 +60,7 @@ public class FPQuadruple implements FPNumber<FPQuadruple>{
 
     @Override
     public FPQuadruple clone() {
-        return new FPQuadruple(internalValue);
+        return new FPQuadruple(new Quadruple(internalValue));
     }
 
     @Override
