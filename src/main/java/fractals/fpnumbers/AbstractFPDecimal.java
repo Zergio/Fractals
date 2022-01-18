@@ -1,5 +1,7 @@
 package fractals.fpnumbers;
 
+import fractals.Utils;
+
 import java.util.Objects;
 
 public abstract class AbstractFPDecimal<T extends AbstractFPDecimal<T>> implements FPNumber<T> {

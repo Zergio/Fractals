@@ -1,6 +1,7 @@
 package fractals.fpnumbers;
 
-import java.math.BigInteger;
+import fractals.Utils;
+
 import java.text.DecimalFormat;
 
 public class FPDouble implements FPNumber<FPDouble> {

@@ -1,5 +1,7 @@
 package fractals.fpnumbers;
 
+import fractals.Utils;
+
 public class FPDecimal2 extends AbstractFPDecimal<FPDecimal2> {
 
     FPDecimal2(String number) {

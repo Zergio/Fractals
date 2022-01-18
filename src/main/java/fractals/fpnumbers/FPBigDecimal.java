@@ -1,5 +1,7 @@
 package fractals.fpnumbers;
 
+import fractals.Utils;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 

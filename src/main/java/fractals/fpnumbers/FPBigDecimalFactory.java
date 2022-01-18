@@ -11,7 +11,6 @@ public class FPBigDecimalFactory extends FPNumberFactory<FPBigDecimal> {
         return new FPBigDecimal(number);
     }
 
-    @Override
     public FPBigDecimal createFPNumber(long longPart, long scalePart) {
         return new FPBigDecimal(longPart, scalePart);
     }

@@ -1,5 +1,7 @@
 package fractals.fpnumbers;
 
+import fractals.Utils;
+
 public class FPDoubleFactory extends FPNumberFactory<FPDouble> {
 
     @Override
@@ -12,7 +14,6 @@ public class FPDoubleFactory extends FPNumberFactory<FPDouble> {
         return new FPDouble(number);
     }
 
-    @Override
     public FPDouble createFPNumber(long longPart, long scalePart) {
         if (scalePart > 0) {
             return new FPDouble(longPart * (Utils.POWERS_OF_TEN[(int) scalePart]));

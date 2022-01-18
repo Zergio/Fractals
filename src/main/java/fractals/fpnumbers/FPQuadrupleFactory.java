@@ -1,5 +1,7 @@
 package fractals.fpnumbers;
 
+import fractals.Utils;
+
 public class FPQuadrupleFactory extends FPNumberFactory<FPQuadruple> {
 
     @Override
@@ -12,7 +14,6 @@ public class FPQuadrupleFactory extends FPNumberFactory<FPQuadruple> {
         return new FPQuadruple(number);
     }
 
-    @Override
     public FPQuadruple createFPNumber(long longPart, long scalePart) {
         if (scalePart > 0) {
             return new FPQuadruple(longPart * (Utils.POWERS_OF_TEN[(int) scalePart]));

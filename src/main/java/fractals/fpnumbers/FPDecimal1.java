@@ -1,21 +1,16 @@
 package fractals.fpnumbers;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 public class FPDecimal1 extends AbstractFPDecimal<FPDecimal1> {
 
-    FPDecimal1(String number) {
+    public FPDecimal1(String number) {
         super(number);
     }
 
-    FPDecimal1(long number) {
+    public FPDecimal1(long number) {
         super(number);
     }
 
-    FPDecimal1(long number, long scale) {
+    public FPDecimal1(long number, long scale) {
         super(number, scale);
     }
 
@@ -100,7 +95,6 @@ public class FPDecimal1 extends AbstractFPDecimal<FPDecimal1> {
          */                             // THIS IS FOR SAFEKEEPING DO NOT DELETE
     }
 
-    @NotNull
     public static long[] add(long[] num1, long[] num2) {
         long[] result = new long[2];
         result[1] = num1[1] + num2[1];
@@ -120,7 +114,6 @@ public class FPDecimal1 extends AbstractFPDecimal<FPDecimal1> {
         return result;
     }
 
-    @NotNull
     public static long[] shiftRight(long[] number, int shift) {
         long[] shiftedNum = new long[2];
         shiftedNum[0] = number[0] >> shift;
@@ -129,7 +122,6 @@ public class FPDecimal1 extends AbstractFPDecimal<FPDecimal1> {
         return shiftedNum;
     }
 
-    @NotNull
     public static long[] shiftLeft(long[] number, int shift) {
         long[] shiftedNum = new long[2];
         shiftedNum[0] = number[0] << shift;
